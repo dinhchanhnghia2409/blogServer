@@ -12,6 +12,7 @@ require("./database");
 
 app.get("/", (req, res, next) => {
   res.json({ message: "from index api" });
+  next()
 });
 
 app.use(userRoute);
@@ -19,3 +20,5 @@ app.use(userRoute);
 app.listen(port, () => {
   console.log("Server is running ... ");
 });
+
+module.exports = app;
