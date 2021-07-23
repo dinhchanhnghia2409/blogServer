@@ -39,7 +39,7 @@ exports.loginAccount = (username, password, res) => {
   });
 };
 
-exports.validatorField = (username, password, res) => {
+exports.validateInputs = (username, password, res) => {
   if (!username && !password) {
     return res.status(400).json({ error: "Can't blank username and password" });
   } else if (!username) {

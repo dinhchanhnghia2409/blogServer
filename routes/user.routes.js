@@ -7,14 +7,14 @@ const userController = require("../controllers/user.controller");
 route.post("/user/signup", async (req, res) => {
   const { username, password } = req.body;
 
-  userController.validatorField(username, password, res);
+  userController.validateInputs(username, password, res);
   userController.createAccount(username, password, res);
 });
 
 route.post("/user/signin", async (req, res) => {
   const { username, password } = req.body;
 
-  userController.validatorField(username, password, res);
+  userController.validateInputs(username, password, res);
   userController.loginAccount(username, password, res);
 });
 
