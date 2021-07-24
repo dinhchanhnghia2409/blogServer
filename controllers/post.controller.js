@@ -25,15 +25,34 @@ exports.getAllPost = (res) => {
     .then((posts) => {
       res.json({ posts });
     })
-    .catch((erroes) => {
+    .catch((errors) => {
       res
         .status(400)
-        .json({ error: "Opps... Request fail... Reason: " + errors });
+        .json({ error: "Opps.. Request Failed... Reason: " + errors });
+    });
+};
+
+exports.getPostByAuthor = (authorId, res) => {
+  Post.find({ author: authorId })
+    .populate("author", "_id username")
+    .then((myPost) => {
+      res.json({ myPost });
+    })
+    .catch((errors) => {
+      res
+        .status(400)
+        .json({ error: "Opps.. Request Failed... Reason: " + errors });
     });
 };
 
 exports.deletePost = (idPost, res) => {
-  Post.findByIdAndRemove({ _id: idPost }).then(() => {
-    res.status(200).json({ message: "Delete post Success!" });
-  });
+  Post.findByIdAndRemove({ _id: idPost })
+    .then(() => {
+      res.status(200).json({ message: "Delete post Success!" });
+    })
+    .catch((errors) => {
+      res
+        .status(400)
+        .json({ error: "Opps.. Request Failed... Reason: " + errors });
+    });
 };
