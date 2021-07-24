@@ -2,6 +2,8 @@ const express = require("express");
 const route = express.Router();
 const authentication = require("../middleware/Authentication");
 const postController = require("../controllers/post.controller");
+const { findByIdAndRemove } = require("../models/post.model");
+const Post = require('../models/post.model')
 
 route.post("/create-post", authentication, (req, res) => {
   const { title, content } = req.body;
@@ -12,5 +14,10 @@ route.post("/create-post", authentication, (req, res) => {
 route.get("/allpost", authentication, (req, res) => {
   postController.getAllPost(res);
 });
+
+route.delete("/delete-post/:postId",authentication,(req,res)=>{
+  const idPost = req.params.postId;
+  postController.deletePost(idPost,res)
+})
 
 module.exports = route;
