@@ -3,8 +3,6 @@ const route = express.Router();
 require("dotenv").config();
 const Authentication = require("../middleware/Authentication");
 const userController = require("../controllers/user.controller");
-const bcrypt = require("bcryptjs");
-const User = require("../models/user.model");
 
 route.post("/user/signup", async (req, res) => {
   const { username, password } = req.body;
@@ -20,22 +18,19 @@ route.post("/user/signin", async (req, res) => {
   userController.loginAccount(username, password, res);
 });
 
-route.put("/user/change-password", Authentication, (req, res) => {
+route.patch("/user/change-password", Authentication, (req, res) => {
   const idUser = req.user._id.toString();
 
   const password = req.user.password;
   const { currentPassword, newPassword, confirmPassword } = req.body;
-  bcrypt.compare(currentPassword, password).then((doMatch) => {
-    if (doMatch) {
-      if (newPassword === confirmPassword) {
-        bcrypt.hash(newPassword, 10).then((newHashedPassword) => {
-          User.findByIdAndUpdate(idUser, {
-            $set: { password: newHashedPassword },
-          }).then(res.status(200).json({ message: "Success!" }));
-        });
-      }
-    }
-  });
+  userController.changePassword(
+    password,
+    currentPassword,
+    newPassword,
+    confirmPassword,
+    idUser,
+    res
+  );
 });
 
 route.get("/user/me", Authentication, (req, res) => {

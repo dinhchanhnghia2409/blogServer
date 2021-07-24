@@ -70,10 +70,14 @@ exports.changePassword = (
         bcrypt.hash(newPassword, 10).then((newHashedPassword) => {
           User.findByIdAndUpdate(idUser, {
             $set: { password: newHashedPassword },
-          }).then(res.status(200).json({ message: "Success!" }));
+          }).then(res.status(200).json({ message: "Change password success!" }));
         });
       }
     }
+  }).catch((errors) => {
+    res
+      .status(400)
+      .json({ error: "Opps.. Request Failed... Reason: " + errors });
   });
 };
 
