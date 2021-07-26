@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 
-exports.createAccount = async (username, password, res) => {
+exports.createAccount = async (email, username, password, res) => {
   const checkExitsUsername = await User.findOne({ username: username });
 
   if (checkExitsUsername) {
@@ -12,6 +12,7 @@ exports.createAccount = async (username, password, res) => {
       .hash(password, 10)
       .then((hashedPassword) => {
         const user = new User({
+          email,
           username,
           password: hashedPassword,
         });
@@ -64,21 +65,57 @@ exports.changePassword = (
   idUser,
   res
 ) => {
-  bcrypt.compare(currentPassword, password).then((doMatch) => {
-    if (doMatch) {
-      if (newPassword === confirmPassword) {
-        bcrypt.hash(newPassword, 10).then((newHashedPassword) => {
-          User.findByIdAndUpdate(idUser, {
-            $set: { password: newHashedPassword },
-          }).then(res.status(200).json({ message: "Change password success!" }));
-        });
+  bcrypt
+    .compare(currentPassword, password)
+    .then((doMatch) => {
+      if (doMatch) {
+        if (newPassword === confirmPassword) {
+          bcrypt.hash(newPassword, 10).then((newHashedPassword) => {
+            User.findByIdAndUpdate(idUser, {
+              $set: { password: newHashedPassword },
+            }).then(
+              res.status(200).json({ message: "Change password success!" })
+            );
+          });
+        }
       }
+    })
+    .catch((errors) => {
+      res
+        .status(400)
+        .json({ error: "Opps.. Request Failed... Reason: " + errors });
+    });
+};
+
+exports.followUser = (idFollow,req,res) => {
+  User.findByIdAndUpdate(
+    idFollow,
+    {
+      $push: { followers: req.user._id },
+    },
+    {
+      new: true,
+    },
+    (errors) => {
+      if (errors) {
+        return res.status(422).json({ error: errors });
+      }
+      User.findByIdAndUpdate(
+        req.user._id,
+        {
+          $push: { following: idFollow },
+        },
+        { new: true }
+      )
+        .select("-password")
+        .then((result) => {
+          res.json(result);
+        })
+        .catch((errors) => {
+          return res.status(422).json({ error: errors });
+        });
     }
-  }).catch((errors) => {
-    res
-      .status(400)
-      .json({ error: "Opps.. Request Failed... Reason: " + errors });
-  });
+  );
 };
 
 exports.validateInputs = (username, password, res) => {

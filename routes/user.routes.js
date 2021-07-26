@@ -3,12 +3,13 @@ const route = express.Router();
 require("dotenv").config();
 const Authentication = require("../middleware/Authentication");
 const userController = require("../controllers/user.controller");
+const User = require("../models/user.model");
 
 route.post("/user/signup", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, username, password } = req.body;
 
   userController.validateInputs(username, password, res);
-  userController.createAccount(username, password, res);
+  userController.createAccount(email, username, password, res);
 });
 
 route.post("/user/signin", async (req, res) => {
@@ -33,9 +34,14 @@ route.patch("/user/change-password", Authentication, (req, res) => {
   );
 });
 
+route.put("/follow", Authentication, (req, res) => {
+  const idFollow = req.body.followId;
+  userController.followUser(idFollow,req,res);
+});
+
 route.get("/user/me", Authentication, (req, res) => {
   console.log(req.user);
-  res.send(req.user._id);
+  res.send(req.user);
 });
 
 module.exports = route;
