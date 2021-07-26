@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 
+var refreshTokens = {};
+
 exports.createAccount = async (email, username, password, res) => {
   const checkExitsUsername = await User.findOne({ username: username });
 
@@ -43,7 +45,20 @@ exports.loginAccount = (username, password, res) => {
               expiresIn: "1h",
             }
           );
-          return res.status(200).json({ token });
+          const refreshToken = jwt.sign(
+            { _id: savedUser._id },
+            process.env.SERECT_KEY,
+            {
+              expiresIn: "2h",
+            }
+          );
+          const response = {
+            status: "Logged in",
+            token: token,
+            refreshToken: refreshToken,
+          };
+          refreshTokens[refreshToken] = response;
+          return res.status(200).json({ response });
         } else
           return res
             .status(400)
@@ -55,6 +70,21 @@ exports.loginAccount = (username, password, res) => {
         .status(400)
         .json({ error: "Opps.. Request Failed... Reason: " + errors });
     });
+};
+
+exports.newTokenJwtExpired = (idUser, refreshToken, req, res) => {
+  if (refreshToken && refreshToken in refreshTokens) {
+    const token = jwt.sign({ _id: idUser }, process.env.SERECT_KEY, {
+      expiresIn: "1h",
+    });
+    const response = {
+      token: token,
+    };
+    refreshTokens[refreshToken].token = token;
+    res.status(200).json(response);
+  } else {
+    res.status(404).send("Invalid request");
+  }
 };
 
 exports.changePassword = (
@@ -118,7 +148,7 @@ exports.followUser = (idFollow, req, res) => {
   );
 };
 
-exports.unFollowUser = (idUnFollow,req,res) => {
+exports.unFollowUser = (idUnFollow, req, res) => {
   User.findByIdAndUpdate(
     idUnFollow,
     {
@@ -129,7 +159,7 @@ exports.unFollowUser = (idUnFollow,req,res) => {
     },
     (errors) => {
       if (errors) {
-        return res.status(422).json({ error: errors});
+        return res.status(422).json({ error: errors });
       }
       User.findByIdAndUpdate(
         req.user._id,
