@@ -36,7 +36,12 @@ route.patch("/user/change-password", Authentication, (req, res) => {
 
 route.put("/follow", Authentication, (req, res) => {
   const idFollow = req.body.followId;
-  userController.followUser(idFollow,req,res);
+  userController.followUser(idFollow, req, res);
+});
+
+route.put("/unfollow", Authentication, (req, res) => {
+  const idUnFollow = req.body.unFollowId;
+  userController.unFollowUser(idUnFollow,req,res);
 });
 
 route.get("/user/me", Authentication, (req, res) => {

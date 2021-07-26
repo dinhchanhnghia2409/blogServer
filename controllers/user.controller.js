@@ -87,7 +87,7 @@ exports.changePassword = (
     });
 };
 
-exports.followUser = (idFollow,req,res) => {
+exports.followUser = (idFollow, req, res) => {
   User.findByIdAndUpdate(
     idFollow,
     {
@@ -113,6 +113,37 @@ exports.followUser = (idFollow,req,res) => {
         })
         .catch((errors) => {
           return res.status(422).json({ error: errors });
+        });
+    }
+  );
+};
+
+exports.unFollowUser = (idUnFollow,req,res) => {
+  User.findByIdAndUpdate(
+    idUnFollow,
+    {
+      $pull: { followers: req.user._id },
+    },
+    {
+      new: true,
+    },
+    (errors) => {
+      if (errors) {
+        return res.status(422).json({ error: errors});
+      }
+      User.findByIdAndUpdate(
+        req.user._id,
+        {
+          $pull: { following: idUnFollow },
+        },
+        { new: true }
+      )
+        .select("-password")
+        .then((result) => {
+          res.json(result);
+        })
+        .catch((err) => {
+          return res.status(422).json({ error: err });
         });
     }
   );
