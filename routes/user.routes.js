@@ -18,7 +18,7 @@ route.post("/user/signin", async (req, res) => {
   userController.loginAccount(username, password, res);
 });
 
-route.post("/token", Authentication, (req, res) => {
+route.post("/new-token", Authentication, (req, res) => {
   const idUser = req.user._id;
   const { refreshToken } = req.body;
   userController.newTokenJwtExpired(idUser, refreshToken, req, res);
