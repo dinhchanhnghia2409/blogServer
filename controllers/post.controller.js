@@ -32,6 +32,24 @@ exports.getAllPost = (res) => {
     });
 };
 
+exports.likePost = (idPost, idUser, res) => {
+  Post.findByIdAndUpdate(
+    idPost,
+    {
+      $push: { likes: idUser },
+    },
+    {
+      new: true,
+    }
+  ).exec((errors, result) => {
+    if (errors) {
+      return res.status(422).json({ error: errors });
+    } else {
+      res.json(result);
+    }
+  });
+};
+
 exports.getPostByAuthor = (authorId, res) => {
   Post.find({ author: authorId })
     .populate("author", "_id username")
