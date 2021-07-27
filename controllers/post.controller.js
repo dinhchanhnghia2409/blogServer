@@ -50,6 +50,24 @@ exports.likePost = (idPost, idUser, res) => {
   });
 };
 
+exports.unLikePost = (idPost,idUser,res) => {
+  Post.findByIdAndUpdate(idPost,{
+    $pull:{likes: idUser},
+  },{
+    new: true,
+  }).exec((errors,result)=>{
+    if(errors){
+      return res.status(422).json({error: errors});
+    }else {
+      re.json(result)
+    }
+  })
+}
+
+exports.commentPost = () => {
+
+}
+
 exports.getPostByAuthor = (authorId, res) => {
   Post.find({ author: authorId })
     .populate("author", "_id username")
