@@ -16,7 +16,7 @@ const postSchema = new mongooes.Schema(
     comments: [
       {
         text: String,
-        postedBy: { type: ObjectId, ref: "User" },
+        commentBy: { type: ObjectId, ref: "User" },
       },
     ],
   },

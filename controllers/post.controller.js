@@ -50,23 +50,48 @@ exports.likePost = (idPost, idUser, res) => {
   });
 };
 
-exports.unLikePost = (idPost,idUser,res) => {
-  Post.findByIdAndUpdate(idPost,{
-    $pull:{likes: idUser},
-  },{
-    new: true,
-  }).exec((errors,result)=>{
-    if(errors){
-      return res.status(422).json({error: errors});
-    }else {
-      re.json(result)
+exports.unLikePost = (idPost, idUser, res) => {
+  Post.findByIdAndUpdate(
+    idPost,
+    {
+      $pull: { likes: idUser },
+    },
+    {
+      new: true,
     }
-  })
-}
+  ).exec((errors, result) => {
+    if (errors) {
+      return res.status(422).json({ error: errors });
+    } else {
+      re.json(result);
+    }
+  });
+};
 
-exports.commentPost = () => {
-
-}
+exports.commentPost = (content, idUser, idPost, res) => {
+  const comment = {
+    text: content,
+    commentBy: idUser,
+  };
+  Post.findByIdAndUpdate(
+    idPost,
+    {
+      $push: { comments: comment },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("comments.commentBy", "_id username")
+    .populate("author", "_id name")
+    .exec((errors, result) => {
+      if (errors) {
+        return res.status(422).json({ error: err });
+      } else {
+        res.json(result);
+      }
+    });
+};
 
 exports.getPostByAuthor = (authorId, res) => {
   Post.find({ author: authorId })
