@@ -3,13 +3,18 @@ const route = express.Router();
 require("dotenv").config();
 const Authentication = require("../middleware/Authentication");
 const userController = require("../controllers/user.controller");
+const rateLimitRequest = require("../middleware/RateLimitRequest");
 
-route.post("/user/signup", async (req, res) => {
-  const { email, username, password } = req.body;
+route.post(
+  "/user/signup",
+  rateLimitRequest.createAccountLimit,
+  async (req, res) => {
+    const { email, username, password } = req.body;
 
-  userController.validateInputs(username, password, res);
-  userController.createAccount(email, username, password, res);
-});
+    userController.validateInputs(username, password, res);
+    userController.createAccount(email, username, password, res);
+  }
+);
 
 route.post("/user/signin", async (req, res) => {
   const { username, password } = req.body;
