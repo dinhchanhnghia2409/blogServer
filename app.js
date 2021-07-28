@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
 
-app.get("/", (req, res, next) => {
+app.get("/",(req, res, next) => {
   res.json({ message: "Message from server" });
   next()
 });
