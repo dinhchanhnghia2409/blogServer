@@ -33,7 +33,8 @@ route.put("/unlike-post", authentication, (req, res) => {
 route.put("/comment-post", authentication, (req, res) => {
   const content = req.body.text;
   const postId = req.body.idPost;
-  const userId = req.user._id;  postController.commentPost(content,userId,postId,res)
+  const userId = req.user._id;
+  postController.commentPost(content, userId, postId, res);
 });
 
 route.delete("/delete-post/:postId", authentication, (req, res) => {

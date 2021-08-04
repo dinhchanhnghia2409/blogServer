@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const port = process.env.PORT_SERVER;
 const userRoute = require("./routes/user.routes");
 const postRoute = require("./routes/post.routes");
+const fileRoute = require("./routes/file.routes");
 const database = require("./database");
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -44,6 +45,7 @@ app.use(morgan('tiny'));
 
 app.use(userRoute);
 app.use(postRoute);
+app.use(fileRoute);
 
 const runServer = async (port) => {
   await database.connectDatabse();

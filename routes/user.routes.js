@@ -5,6 +5,42 @@ const Authentication = require("../middleware/Authentication");
 const userController = require("../controllers/user.controller");
 const rateLimitRequest = require("../middleware/RateLimitRequest");
 
+/**
+ * @swagger
+ * definitions:
+ *    User:
+ *      type: "object"
+ *      properties:
+ *        email:
+ *          type: string
+ *          "example": "doggie@gmail.com"
+ *        username:
+ *          type: string
+ *          "example": "doggie"
+ *        password:
+ *          type: string
+ *          "example": "doggie"
+ */
+
+/**
+ * @swagger
+ * /user/signup:
+ *   post:
+ *     summary: Create a new account
+ *     tags: [User]
+ *     produces:
+ *       - application/json
+ *       - text/plain
+ *     parameters:
+ *       - in: body
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *     responses:
+ *       201:
+ *         description: Create Account successfully
+ */
+
+
 route.post(
   "/user/signup",
   rateLimitRequest.createAccountLimit,

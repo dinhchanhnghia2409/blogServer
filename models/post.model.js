@@ -1,6 +1,6 @@
-const mongooes = require("mongoose");
-const { ObjectId } = mongooes.Schema.Types;
-const postSchema = new mongooes.Schema(
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
+const postSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -23,6 +23,6 @@ const postSchema = new mongooes.Schema(
   { timestamps: true }
 );
 
-const Post = mongooes.model("Post", postSchema);
+const Post = mongoose.model("Post", postSchema);
 
 module.exports = Post;
